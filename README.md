@@ -1,77 +1,69 @@
-# Assessment Projects
-This is the base repository for assessment projects. Candidates should follow these steps:
+On-Demand Processor
 
-**Getting Started:**
-1. **Fork this repository** to your own GitHub account
-2. **Wait for project assignment** - The interview manager will assign you a specific project from the list below
-3. **Develop your solution** in your forked repository
-4. During the **technical discussion**, we will review your code directly from your forked repository
+Minimal job processor with FastAPI + MySQL. Submit jobs with one or more tasks, track live status and progress, and view results via a simple UI or Swagger.
 
-**Note:** Make sure your forked repository is public so we can access it during the technical review session.
+Requirements
+- Python 3.10+
+- MySQL 
+- Install deps:
+  ```bash
+  python -m pip install fastapi uvicorn aiomysql pydantic
+  ```
 
-## DO's
-- Document your code
-- Follow best practices
-**Technical Requirements:**
-- Language: Any (Python, Node.js, Go, Rust, etc.)
-- Storage: File-based (JSON, SQLite, or encrypted files)
-- Security: Implement proper encryption and secure password handling
+Database setup
+1) Configure connection in `on-demand-processor/main.py` under `DB_CONFIG` (host, port, user, password, db). Default MySQL port is 3306.
+2) Create database and tables:
+```sql
+CREATE DATABASE IF NOT EXISTS job_db;
+USE job_db;
 
-## Dont's
-- Don't copy code directly from online sources or tutorials
-- Don't commit sensitive information (API keys, passwords, personal data)
-- Don't ignore error handling and edge cases
-- Don't skip code comments and documentation
-- Don't use deprecated libraries or outdated practices
-- Don't hardcode configuration values
-- Don't submit incomplete or non-functional code
-- Don't violate security best practices
-- Don't plagiarize from other candidates' solutions
-- Don't create pull requests on this repository - work only in your forked repository
+CREATE TABLE IF NOT EXISTS jobs (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  job_id VARCHAR(64) UNIQUE NOT NULL,
+  metadata JSON NULL,
+  state VARCHAR(32) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
 
----
+CREATE TABLE IF NOT EXISTS tasks (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  task_id VARCHAR(64) UNIQUE NOT NULL,
+  job_id VARCHAR(64) NOT NULL,
+  type VARCHAR(64) NOT NULL,
+  payload JSON NULL,
+  state VARCHAR(32) NOT NULL,
+  progress INT NOT NULL DEFAULT 0,
+  started_at DATETIME NULL,
+  finished_at DATETIME NULL,
+  FOREIGN KEY (job_id) REFERENCES jobs(job_id)
+);
+```
 
-# Projects
-## Authentication System
-**Description**
-Create an authentication system that handles at least 2 different types of authentication mechanisms.
-- Authentication server that supports atleast 2 different types of user authentication mechanism.
+How to run
+- API + UI (frontend):
+  ```bash
+  python -m uvicorn serve:app --app-dir on-demand-processor --reload --lifespan on
+  ```
+  - UI: `http://127.0.0.1:8000/`
+  
 
----
-## Password Manager
-**Description**
-Create a terminal-based password manager application that helps users securely store, generate, and manage their passwords. This project will help you understand cryptography, secure storage, and command-line interface development.
+- Swagger UI:
+  ```bash
+  python -m uvicorn main:app --app-dir on-demand-processor --reload --lifespan on
+  ```
+  - Swagger: `http://127.0.0.1:8000/docs`
 
-**What is a Password Manager?**
-A password manager is a software application that stores and manages online credentials in an encrypted database. It helps users generate strong, unique passwords for different accounts and remembers them so users don't have to.
+Core endpoints
+- Submit job (returns job and task IDs)
+  - `POST /ui/jobs` body:
+    ```json
+    { "metadata": {}, "tasks": [{ "type": "sleep", "payload": { "duration": 3 } }] }
+    ```
+  - response: `{ "job_id": "...", "task_ids": ["task_..."] }`
 
-**Core Features to Implement:**
-- **Master Password Protection**: Secure the entire password vault with a master password
-- **Password Storage**: Store website URLs, usernames, and encrypted passwords
-- **Strong Password Generation**: Generate cryptographically secure passwords with customizable length and character sets
-- **Password Rotation**: Allow users to update/rotate existing passwords
-- **Search & Retrieve**: Find and display stored credentials
-- **Terminal Interface**: Command-line based interface for all operations
-- **Encryption**: All stored passwords must be encrypted (AES-256 recommended)
-- **Import/Export**: Basic functionality to backup and restore password data
+- Submit job (API): `POST /jobs` → `{ "job_id": "..." }`
+- Get job: `GET /jobs/{job_id}` → job + tasks with progress
+- Get task: `GET /tasks/{task_id}` → single task with progress
+”.
 
----
-## CRUD API
-**Description**
-Using any of below databases build an API to perform CURD operation.
-- API's should support multiple formats of output & input
-- At least one endpoint should support streaming.
-- One endpoint should combine results for 3 different services/ data sets and implemennts async/parallel processing.
-- [netflixdb](https://github.com/lerocha/netflixdb)
-- [sakila-sqlite3](https://github.com/bradleygrant/sakila-sqlite3)
-
----
-## On-Demand Processor
-**Description**
-Develop a system that accepts jobs, and process them.
-- A job can have multiple tasks in it.
-- Live status of tasks and job, % completion should be available.
-- Configurable settings for number of parallel execution.
-- API endpoint to submit jobs
-- Basic persistence (JSON or SQLite)
-- Graceful shutdown handling

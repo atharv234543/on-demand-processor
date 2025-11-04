@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>On-Demand Job Processor</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>On-Demand Job Processor</h1>
+
+      <section class="card">
+        <h2>Submit Job</h2>
+        <form id="job-form">
+          <div class="row" style="justify-content:space-between;align-items:center">
+            <h3 style="margin:0">Tasks</h3>
+            <div>
+              <button id="btn-add-task" type="button">Add Task</button>
+            </div>
+          </div>
+          <div id="tasks-container"></div>
+          <div class="row">
+            <label>Metadata (JSON)</label>
+            <textarea id="job-metadata" rows="3">{"source":"ui"}</textarea>
+          </div>
+          <button type="submit">Submit</button>
+        </form>
+        <div id="submit-result" class="muted"></div>
+      </section>
+
+      <section class="card">
+        <h2>Job Status</h2>
+        <div class="row">
+          <label>Job ID</label>
+          <input id="job-id-input" type="text" placeholder="job_xxxxxxxx" />
+          <button id="btn-fetch-job">Fetch</button>
+        </div>
+        <pre id="job-json" class="code"></pre>
+      </section>
+
+      <section class="card">
+        <h2>Task Status</h2>
+        <div class="row">
+          <label>Task ID</label>
+          <input id="task-id-input" type="text" placeholder="task_xxxxxxxx" />
+          <button id="btn-fetch-task">Fetch</button>
+        </div>
+        <pre id="task-json" class="code"></pre>
+      </section>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+  </html>
+
+
