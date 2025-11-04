@@ -12,9 +12,9 @@ from datetime import datetime, timezone
 DB_CONFIG = {
     "host": "localhost",
     "port": 3306,
-    "user": "",
-    "password": "",
-    "db": ""
+    "user": "your-db-username",
+    "password": "your-db-password",
+    "db": "your-db-name"
 }
 
 #System configuration
