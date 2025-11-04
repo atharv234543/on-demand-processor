@@ -65,5 +65,10 @@ Core endpoints
 - Submit job (API): `POST /jobs` → `{ "job_id": "..." }`
 - Get job: `GET /jobs/{job_id}` → job + tasks with progress
 - Get task: `GET /tasks/{task_id}` → single task with progress
+
 ”.
+
+Screenshot:
+<img width="1920" height="964" alt="On-Demand Job Processor - Google Chrome 04-11-2025 17_18_09" src="https://github.com/user-attachments/assets/ab15f4d4-5f17-4da2-b602-a1e68e78f484" />
+
 
